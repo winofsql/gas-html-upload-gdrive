@@ -64,11 +64,11 @@ function processForm(formObject) {
 
   for( i = 0; i < targets.length; i++ ) {
 
-     console.log(targets[i]);
-     var uploadFolder = DriveApp.getFolderById(targets[i]);
+    console.log(targets[i]);
+    var uploadFolder = DriveApp.getFolderById(targets[i]);
 
     console.log(formBlob);
-     var driveFile = uploadFolder.createFile(formBlob); //アップロード
+    var driveFile = uploadFolder.createFile(formBlob); //アップロード
     
   }
  
