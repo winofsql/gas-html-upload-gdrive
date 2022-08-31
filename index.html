@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css">
+<base target="_top">
+<script>
+var targetFileName = "";
+var targetList = [];
+
+// ************************************
+// ファイル選択後の処理
+// ************************************
+function changeSubmitButton() {
+
+  targetFileName = document.getElementById("myFile").files[0].name;
+
+  // GAS 呼び出し( 成功時にこちらでの実行処理を実装 )  
+  // data が gettargetFolderId で取得した配列
+  google.script.run.withSuccessHandler(function(data){
+
+      targetList = data;
+      document.getElementById("upload").disabled = false;
+
+      // folders フィールドにカンマ区切りで対象フォルダを作成( この一覧を GAS 側に渡す )      
+      for( i = 0; i < targetList.length; i++ ){
+        if ( document.getElementById("folders").value == "" ) {
+            document.getElementById("folders").value = targetList[i];
+        }
+        else {
+            document.getElementById("folders").value += "," + targetList[i];
+        }
+      }
+      
+  }).gettargetFolderId();
+}
+
+// ************************************
+// アップロード
+// ************************************
+function handleFormSubmit(formObject) {
+  //event.preventDefault();
+
+  var div = document.getElementById('progress');
+  div.innerHTML='アップロード中...';
+  //アップロード成功した場合はupdateView()実行
+
+  // アップロード呼び出し(  )
+  google.script.run.withSuccessHandler(updateView).processForm(formObject);
+
+}
+
+// ************************************
+// アップロード成功後メッセージ変更
+// ************************************
+function updateView() {
+  var div = document.getElementById('progress');
+  div.innerHTML = 'アップロード完了しました';
+  document.getElementById("upload").disabled = true;
+
+}
+</script>
+</head>
+<body>
+<div id="myform" class="alert alert-primary">ファイルを選択 > アップロード</div>
+  <form onsubmit="handleFormSubmit(this)">
+    <input id="myFile" name="myFile" type="file" onchange="changeSubmitButton()">
+    <input id="upload" name="send" type="submit" value="アップロード" disabled>
+    <input type="hidden" id="folders" name="folders">
+  </form>
+  <div id="progress"></div>
+</body>
+</html>
